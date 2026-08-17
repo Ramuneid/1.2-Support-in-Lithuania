@@ -32,7 +32,7 @@ The project is guided by the following questions:
 - Are the biggest recipients becoming stronger over time?
 - Who may be left behind in the competition for support?
 
-![Research question visual](./research-question-visual.svg)
+![Research question visual](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/research-question-visual.png?raw=true)
 
 ## Data Sources
 
@@ -168,4 +168,3 @@ Power BI report link:
 Created by **Ramune Idzelyte**
 
 Have a project where data, people, or impact matter? I would be happy to connect on LinkedIn.
-
