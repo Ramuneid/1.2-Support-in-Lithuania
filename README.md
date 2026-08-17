@@ -1,5 +1,7 @@
 # Not All Barriers Are Visible: 1.2% Support in Lithuania
 
+![Research question visual](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/research-question-visual.png?raw=true)
+
 ## Project Overview
 
 This project explores the question:
@@ -31,8 +33,6 @@ The project is guided by the following questions:
 - How has the distribution changed between 2020 and 2024?
 - Are the biggest recipients becoming stronger over time?
 - Who may be left behind in the competition for support?
-
-![Research question visual](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/research-question-visual.png?raw=true)
 
 ## Data Sources
 
