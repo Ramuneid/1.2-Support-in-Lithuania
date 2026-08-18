@@ -21,7 +21,7 @@ The aim of this project was twofold:
 
    This analysis investigates who receives 1.2% support, how the support is distributed among recipients, and how the situation changed between 2020 and 2024.
 
-2. **To practice and strengthen the full data analysis workflow**
+2. **To practice and strengthen the full data analysis workflow, with a particular focus on exploring and applying Power BI capabilities**
 
    This project allowed me to apply skills in data extraction, data cleaning, transformation, modelling, exploratory data analysis, visualization, and publishing a Power BI report.
 
