@@ -1,6 +1,6 @@
 # Not All Barriers Are Visible: 1.2% Support in Lithuania
 
-![Research question visual](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/research-question-visual.png?raw=true)
+![Research question visual](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/images/research-question-visual.png?raw=true)
 <span style="font-size: 11px; font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive; color: #555;">Landing page of Power BI report, visual created with Gamma.app</span>
 
 ## Project Overview
