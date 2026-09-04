@@ -97,6 +97,8 @@ Separate measure tables were used to organise DAX calculations and keep the mode
 
 This structure supports interactive filtering and makes it possible to analyse the same support measures from multiple perspectives without duplicating the underlying data.
 
+![Data Model](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/images/DataModel.png?raw=true)
+
 ### 5. DAX Calculations
 
 DAX formulas were used to enrich the dataset and create additional insights.
