@@ -81,13 +81,21 @@ This included:
 
 ### 4. Data Modelling
 
-A data model was created in Power BI to connect the relevant tables and support flexible analysis.
+The data was structured using a star-schema-based model, with fac_Parama as the central fact table containing support amounts, number of supporters, recipient identifiers, and year.
+Supporting dimension tables provide additional context about:
 
-This included:
+- Support recipients and their characteristics
+- Recipient contact and organisational information
+- Municipality and population data
+- Calendar
+  
+The model uses one-to-many relationships between dimension tables and the central fact table, allowing support data to be analysed across different years, recipients, organisation characteristics, and geographical areas.
+A dedicated calendar table was created to support consistent time-based filtering and yearly comparisons.
 
-- Creating relationships between tables
-- Structuring the model for analysis
-- Preparing fields for visual reporting
+Municipality population data was also integrated into the model, allowing support patterns to be explored in relation to the size and characteristics of different municipalities.
+Separate measure tables were used to organise DAX calculations and keep the model easier to navigate and maintain. These include general KPIs as well as specialised calculations for the Top 10 recipients and supporter behaviour.
+
+This structure supports interactive filtering and makes it possible to analyse the same support measures from multiple perspectives without duplicating the underlying data.
 
 ### 5. DAX Calculations
 
