@@ -590,29 +590,120 @@ This structure supports interactive filtering and makes it possible to analyse t
 
 *Power BI data model showing the central fact table, supporting dimensions, relationships, and measure tables.*
 
-### 5. DAX Calculations
+## 5. DAX Calculations
 
-DAX formulas were used to enrich the dataset and create additional insights.
+DAX was used to extend the transformed dataset with reusable analytical measures for **totals, distribution analysis, rankings, percentage shares and changes over time**.
 
-This included:
+Most calculations are stored in a dedicated **`Rodikliai` measure table**, keeping analytical logic separate from the fact and dimension tables and making the model easier to maintain.
 
-- Calculated columns
-- Measures
-- Ranking calculations
-- Yearly comparisons
-- Totals and percentage calculations
+#### Core Measures and Descriptive Statistics
 
-### 6. Exploratory Data Analysis
+A small set of base measures provides the foundation for more complex calculations:
 
-Exploratory data analysis was carried out to understand the structure, patterns, and changes in the data.
+- **Total support amount** using `SUM()`
+- **Number of supporters** using `SUM()`
+- **Number of recipients** using `DISTINCTCOUNT()`
+- **Average support per supporter** using `DIVIDE()`
+- Descriptive statistics including **average, median, minimum, maximum and mode**
 
-The analysis focused on:
+More complex measures are built on these base measures rather than repeatedly recalculating the same logic. This **measure branching** approach improves readability, consistency and maintainability.
 
-- Distribution of support among recipients
-- Top recipients by amount received
-- Top recipients by number of supporters
-- Changes over time
-- Differences between large and smaller recipients
+#### Share-of-Total Calculations
+
+Percentage measures compare individual recipients and recipient groups with the relevant total, including:
+
+- recipient share of total support
+- municipality share
+- support share by recipient age group
+- support share by municipality group
+- support share by manager gender
+- recipient-count share across the same categories
+
+`CALCULATE()` together with `ALL()`, `ALLSELECTED()` and `REMOVEFILTERS()` is used to deliberately control filter context.
+
+For example, category filters can be removed from the denominator while retaining other active report filters. This allows measures to respond dynamically to report selections while still calculating the appropriate comparison total.
+
+`DIVIDE()` is used instead of the `/` operator to safely handle zero or missing denominators.
+
+#### Distribution and Concentration Analysis
+
+Additional DAX measures investigate **how concentrated the 1.2% support distribution is among recipients**.
+
+Recipients are dynamically evaluated according to the amount of support they receive, allowing different parts of the distribution to be compared with the overall amount of support.
+
+More complex calculations use virtual tables and iterator functions such as `ADDCOLUMNS()`, `TOPN()`, `FILTER()`, `EXCEPT()` and `SUMX()`.
+
+`ALLSELECTED()` allows these calculations to respond to the current report context, meaning concentration can be analysed both across the full dataset and within selected subsets.
+
+![Distribution and concentration analysis](images/dax-support-concentration.png)
+
+*Dynamic DAX measures compare different parts of the recipient distribution and calculate their share of total support.*
+
+#### Ranking Calculations
+
+Recipients are ranked dynamically according to:
+
+- **total support received**
+- **number of supporters**
+- **average support per supporter**
+
+`RANKX()` with descending `DENSE` ranking is used so that the highest value receives rank 1.
+
+Different filter-context approaches are used depending on the analytical purpose. `ALLSELECTED()` allows rankings to respond to the population currently selected in the report, while `ALL()` and `REMOVEFILTERS()` are used where a stable comparison against a wider population is required.
+
+#### Year-to-Year Comparisons
+
+DAX measures were created to analyse changes in both **support amount** and **number of supporters**.
+
+The current value is compared with the previous available year using:
+
+```text
+(Current Value - Previous Value) / Previous Value
+```
+
+This produces a conventional percentage-change measure, where positive values represent growth and negative values represent decline.
+
+Supporting measures identify the previous year with available data before calculating the percentage difference. `SELECTEDVALUE()` is used where a single year is required, while `MAXX()`, `FILTER()` and `CALCULATE()` identify the relevant preceding period.
+
+When no valid previous value exists, the measure deliberately returns `BLANK()` rather than displaying a misleading percentage.
+
+![Year-to-year change analysis](images/dax-yearly-change.png)
+
+*Year-to-year DAX measures compare support and supporter counts with the previous available period, with conditional formatting highlighting growth and decline.*
+
+#### Whole-Period Change
+
+Separate measures compare the **first and last available values** for each recipient.
+
+The first and last years containing positive support or supporter values are identified dynamically, after which the percentage change across the full available period is calculated.
+
+This allows organisations that entered the dataset in different years to be compared according to their own available history rather than assuming that every recipient was present throughout the entire 2020–2024 period.
+
+Additional checks using `ISBLANK()` and the number of selected years prevent percentage changes from being calculated where a meaningful comparison is not possible.
+
+#### Dynamic Report Context
+
+DAX is also used to make report elements respond to user selections.
+
+For example, the selected-recipient measure uses `HASONEVALUE()`, `SELECTEDVALUE()`, `ISFILTERED()`, `VALUES()` and `CONCATENATEX()` to dynamically display either a single selected recipient, multiple selected recipients or a default label when no recipient filter is applied.
+
+This improves report navigation and helps users understand the filter context behind the displayed results.
+
+#### DAX Practices Applied
+
+The DAX layer follows several practices intended to keep the model clear, reusable and easier to maintain:
+
+- **Dedicated measure table** to separate analytical calculations from source data
+- **Measure branching** so complex calculations reuse established base measures
+- **Variables (`VAR`)** to make multi-step calculations easier to read and debug
+- **`DIVIDE()`** for safe percentage and ratio calculations
+- **Explicit filter-context management** using `CALCULATE()`, `ALL()`, `ALLSELECTED()` and `REMOVEFILTERS()`
+- **Virtual tables** for dynamic ranking and distribution analysis
+- **Iterator functions** such as `SUMX()`, `MAXX()` and `MINX()` where row-by-row evaluation is required
+- **`BLANK()` handling** to avoid presenting misleading results when valid comparisons are unavailable
+- **Dynamic calculations** that respond to slicers and report selections rather than relying on static values
+
+Together, these measures turn the cleaned dataset into an analytical model capable of exploring not only how much support was distributed, but also **how concentrated that support was, how recipients compare with one another, and how support patterns changed over time**.
 
 ### 7. Report Design and Interactivity
 
