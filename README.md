@@ -1,7 +1,5 @@
 # Not All Barriers Are Visible: 1.2% Support in Lithuania
 
-![Research question visual](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/images/research-question-visual.png?raw=true)
-
 *Landing page of the Power BI report. Visual created with Gamma.app.*
 
 ## Project Overview
@@ -10,29 +8,29 @@ This project explores the question:
 
 **Who wins in the race for 1.2% support, and who is left behind?**
 
-In Lithuania, **1.2% support** is a part of a resident's already paid income tax that they can allocate to an eligible organisation. The recipients are usually support beneficiaries such as NGOs, public institutions, community organisations, religious communities, schools, Lithuanian organisations abroad, or eligible artists.
+In Lithuania, **1.2% support** is a share of a resident's already paid personal income tax that can be allocated to an eligible recipient. These recipients include NGOs, public institutions, community organisations, religious communities, schools, Lithuanian organisations abroad, and eligible artists.
 
-The analysis is based on publicly available data from **2020–2024** and focuses on how 1.2% support is distributed among recipients, how this distribution has changed over time, and which organisations receive the most support.
+The analysis uses publicly available data from **2020–2024** and explores how 1.2% support is distributed among recipients, how this distribution has changed over time, and which organisations receive the largest share of support.
 
 ## Project Aim
 
-The aim of this project was twofold:
+The project had two main objectives:
 
-1. **To explore the distribution of 1.2% support in Lithuania**
+1. **Explore the distribution of 1.2% support in Lithuania**
 
-   This analysis investigates who receives 1.2% support, how the support is distributed among recipients, and how the situation changed between 2020 and 2024.
+   Analyse who receives support, how it is distributed among recipients, and how the distribution changed between 2020 and 2024.
 
-2. **To practise and strengthen the full data analysis workflow, with a particular focus on exploring and applying Power BI capabilities**
+2. **Practise and strengthen the full data analysis workflow, with a particular focus on Power BI**
 
-   This project allowed me to apply skills in data extraction, data cleaning, transformation, modelling, exploratory data analysis, visualisation, and publishing a Power BI report.
+   Apply skills in data extraction, data cleaning, transformation, modelling, exploratory analysis, DAX, visualisation, report design, and Power BI publishing.
 
 ## Data Sources
 
 The analysis uses public data from **2020–2024**.
 
-Data was collected using:
+Data was collected through:
 
-- Web scraping
+- Python web scraping
 - Public APIs
 - Direct web data connections in Power Query
 
@@ -40,51 +38,53 @@ Data was collected using:
 
 - Power BI Desktop
 - Power BI Service
+- Power BI App
 - Power Query
 - DAX
 - Python
 - Public APIs
-- Power BI App
 
 ## Data Analysis Workflow
 
 ### 1. Goal Setting and Research Questions
 
-The project started with defining the aim of the analysis and formulating key questions to guide the exploration:
+The project started with defining the analytical goal and formulating questions to guide the exploration:
 
 - Who are the main recipients of 1.2% support in Lithuania?
-- How is 1.2% support distributed among recipients?
+- How is support distributed among recipients?
 - How has the distribution changed between 2020 and 2024?
 - Are the largest recipients becoming stronger over time?
 - Who may be left behind in the competition for support?
 
 ### 2. Data Extraction
 
-Data was collected from publicly available sources using three different approaches: **Python web scraping, public APIs, and direct web data connections in Power Query**.
+Data was collected from publicly available sources using three approaches: **Python web scraping, public APIs, and direct web data connections in Power Query**.
 
-A key design principle of the extraction process was to **prioritise direct connections to original data sources wherever possible**. Rather than relying on manually downloaded and locally stored files, Power Query was connected directly to public APIs and web-hosted datasets.
+A key design principle was to **prioritise direct connections to original data sources wherever possible**. Instead of relying on manually downloaded and locally stored files, Power Query was connected directly to public APIs and web-hosted datasets.
 
-This approach was chosen to make the data pipeline **repeatable, refreshable, and less dependent on manual intervention**. When data changes at a connected source, Power BI can retrieve the updated data during refresh and automatically reapply the existing Power Query transformation steps.
+This was intended to make the pipeline **repeatable, refreshable, and less dependent on manual intervention**. When a connected source changes, Power BI can retrieve the updated data during refresh and reapply the existing transformation steps.
 
-The overall extraction approach can be summarised as:
+The overall extraction workflow is:
 
 `Original source` → `Direct connection` → `Automated retrieval` → `Power Query transformations` → `Data model` → `Power BI report`
 
-Where a direct structured source was not available, Python web scraping was used to collect and enrich additional organisation-level information.
+Where a suitable structured source was not available, Python web scraping was used to collect and enrich additional organisation-level information.
 
 #### Python Web Scraping
 
-A Python scraping script was developed to collect additional information about support recipients that was not available in the main dataset.
+A Python scraping script was developed to collect recipient information that was not available in the main support dataset.
 
-The script uses a structured workflow to identify organisations by company code, retrieve their public profile pages, extract selected attributes, validate the results, and write the enriched data back to CSV.
+The script identifies organisations by company code, retrieves their public profile pages, extracts selected attributes, validates the results, and writes the enriched data back to CSV.
 
 The main technical steps were:
 
-1. **Loading and filtering input data** – the script reads an existing CSV file, selects only records that require additional lookup, normalises company codes, and removes duplicate targets before scraping.
+1. **Load and filter input data**  
+   Read the existing CSV, select records requiring additional lookup, normalise company codes, and remove duplicate targets.
 
-2. **Building resilient HTTP requests** – a reusable `requests.Session` is configured with automatic retries for temporary HTTP errors such as `429`, `500`, `502`, `503`, and `504`. Randomised request headers and delays are also used between requests.
+2. **Build resilient HTTP requests**  
+   Configure a reusable `requests.Session` with retries for temporary HTTP errors such as `429`, `500`, `502`, `503`, and `504`. Randomised request headers and delays are also used between requests.
 
-A retry strategy helps the scraping process handle temporary network or server failures without stopping the entire workflow:
+A retry strategy helps the process recover from temporary network or server failures without stopping the entire workflow:
 
 ```python
 retry_strategy = Retry(
@@ -99,11 +99,11 @@ session.mount("https://", adapter)
 session.mount("http://", adapter)
 ```
 
-3. **Searching for organisations by company code** – search URLs are dynamically constructed using query parameters. The returned search results are parsed to identify candidate organisation profile URLs.
+3. **Search for organisations by company code**  
+   Construct search URLs dynamically using query parameters and parse the returned results to identify candidate organisation profiles.
 
-4. **Validating organisation matches** – candidate profile pages are opened and the company code found on the page is compared with the original input code. This prevents data from being assigned to the wrong organisation.
-
-Instead of automatically accepting the first search result, each candidate organisation is validated against the company code from the source dataset:
+4. **Validate organisation matches**  
+   Open candidate profile pages and compare the company code found on the page with the source record before accepting the result.
 
 ```python
 for candidate_url in candidate_urls:
@@ -120,9 +120,11 @@ for candidate_url in candidate_urls:
         return company_response.url
 ```
 
-5. **Parsing HTML content** – `BeautifulSoup` is used to navigate the HTML structure and locate the relevant information blocks and table fields.
+5. **Parse HTML content**  
+   Use `BeautifulSoup` to navigate the HTML structure and locate the relevant information blocks and table fields.
 
-6. **Extracting organisation attributes** – reusable extraction functions retrieve selected organisation information, including:
+6. **Extract organisation attributes**  
+   Reusable functions retrieve selected fields including:
 
    - Organisation name
    - Company code
@@ -156,7 +158,7 @@ def gauti_reiksme_pagal_pavadinima(blokas, pavadinimas: str) -> str | None:
     return istraukti_td_value_teksta(value_td)
 ```
 
-The same extraction logic can then be reused for multiple attributes:
+The same function can then be reused for multiple attributes:
 
 ```python
 amzius = gauti_reiksme_pagal_pavadinima(blokas1, "Įmonės amžius")
@@ -164,55 +166,59 @@ vadovas = gauti_reiksme_pagal_pavadinima(blokas2, "Vadovas")
 adresas = gauti_reiksme_pagal_pavadinima(blokas2, "Adresas")
 ```
 
-7. **Cleaning extracted values** – regular expressions and helper functions are used to remove unnecessary whitespace and page-specific text before the values are stored.
+7. **Clean extracted values**  
+   Use regular expressions and helper functions to remove unnecessary whitespace and page-specific text.
 
-8. **Handling missing or failed results** – if an organisation cannot be found or a request fails, the script creates a structured empty record instead of interrupting the entire process.
+8. **Handle missing or failed results**  
+   Create structured empty records where an organisation cannot be found or a request fails, rather than interrupting the entire process.
 
-9. **Updating the original dataset** – scraped values are matched back to the corresponding records in the source CSV using the normalised company code.
+9. **Update the original dataset**  
+   Match scraped values back to source records using the normalised company code.
 
-10. **Exporting a timestamped result file** – the enriched dataset is written to a new UTF-8 CSV file, preserving the original data and creating a separate version for further analysis.
+10. **Export a timestamped result file**  
+    Write the enriched dataset to a new UTF-8 CSV file, preserving the original source data.
 
 ##### Technical Flow
 
 `Input CSV` → `Filter target organisations` → `Normalise company codes` → `Build search URL` → `HTTP request with retry logic` → `Parse search results` → `Validate company code` → `Parse organisation page` → `Extract and clean attributes` → `Update original records` → `Export enriched CSV`
 
-The purpose of the scraping process was not only to collect additional information, but also to **automate a repetitive data enrichment workflow, introduce validation and error-handling logic, and transform semi-structured web content into structured data suitable for Power BI analysis**.
+The scraping workflow was designed not only to collect additional information, but also to **automate repetitive enrichment, introduce validation and error handling, and convert semi-structured web content into structured data suitable for Power BI analysis**.
 
 #### Public API and Web Data Connections with Power Query
 
-In addition to Python web scraping, Power Query was used to retrieve data from **public APIs and web-hosted data sources**.
+Power Query was also used to retrieve data from **public APIs and web-hosted data sources**.
 
-Wherever technically possible, direct connections to the original sources were preferred over manually downloaded local files. The objective was to create a **refreshable data extraction workflow** in which Power BI can retrieve updated source data and reapply the defined transformation steps during refresh.
+Where technically possible, direct connections to original sources were preferred over manually downloaded local files. The objective was to create a **refreshable extraction workflow** in which Power BI can retrieve updated data and reapply the defined transformation steps.
 
-The project integrates data from `data.gov.lt` open-data API endpoints, VMI Excel workbooks, JSON and CSV responses, and the enriched organisation data produced during the scraping process.
+The project integrates data from `data.gov.lt` API endpoints, VMI Excel workbooks, JSON and CSV responses, and organisation data enriched through Python.
 
-Different retrieval methods were used depending on how each source exposed its data:
+Different retrieval methods were used depending on the source format:
 
-- **Public API endpoints** – `data.gov.lt` was queried using URL parameters to filter records, select required fields, define date ranges, sort results, and specify output formats.
-- **JSON API responses** – JSON data was retrieved with `Web.Contents()` and parsed using `Json.Document()`.
-- **CSV API responses** – API results returned as CSV were retrieved with `Web.Contents()` and parsed using `Csv.Document()`.
-- **Web-hosted Excel files** – VMI Excel workbooks were retrieved directly using `Web.Contents()` and processed with `Excel.Workbook()`.
-- **Web-hosted CSV files** – additional prepared datasets were connected directly to Power Query and incorporated into the transformation workflow.
+- **Public API endpoints** – URL parameters were used to filter records, select fields, define date ranges, sort results, and specify output formats.
+- **JSON API responses** – retrieved using `Web.Contents()` and parsed with `Json.Document()`.
+- **CSV API responses** – retrieved using `Web.Contents()` and parsed with `Csv.Document()`.
+- **Web-hosted Excel files** – retrieved using `Web.Contents()` and processed with `Excel.Workbook()`.
+- **Web-hosted CSV files** – connected directly to Power Query and incorporated into the transformation workflow.
 
-This approach separates the **source data from the transformation logic**: external sources provide the data, while Power Query stores the repeatable steps required to clean, reshape, and prepare it for analysis.
+This approach separates the **source data from the transformation logic**: external providers supply the data, while Power Query stores the repeatable steps required to clean, reshape, and prepare it for analysis.
 
 The main technical steps were:
 
-1. **Connecting directly to external sources** – Power Query's `Web.Contents()` was used to retrieve data from public API endpoints and web-hosted files.
-2. **Handling multiple data formats** – `Json.Document()` was used for JSON, `Csv.Document()` for CSV, and `Excel.Workbook()` for Excel.
-3. **Filtering API data at source level** – where supported, query parameters were used to request only the records and fields required for the analysis.
-4. **Selecting relevant Excel worksheets dynamically** – the VMI workbook contains multiple worksheets. Power Query identifies the required sheets using their naming pattern instead of relying on one manually selected worksheet.
-5. **Expanding and transforming nested worksheet data** – selected Excel worksheets are expanded into a tabular structure and unnecessary workbook elements are removed.
-6. **Standardising heterogeneous sources** – data from different providers and formats is cleaned and transformed into consistent analytical tables with appropriate identifiers, column structures, and data types.
-7. **Preparing fact and dimension tables** – transformed data is organised into tables with different analytical purposes, including the central support fact table and supporting recipient, municipality/population, and name dimensions.
-8. **Integrating the sources into the Power BI data model** – common identifiers are used to establish relationships between independently collected datasets.
-9. **Designing for refresh and automation** – direct source connections were prioritised so that updated data can be retrieved during Power BI refresh and the same transformation pipeline can be reapplied automatically.
+1. **Connect directly to external sources**
+2. **Handle multiple data formats**
+3. **Filter API data at source level**
+4. **Select relevant Excel worksheets dynamically**
+5. **Expand and transform nested worksheet data**
+6. **Standardise heterogeneous sources**
+7. **Prepare fact and dimension tables**
+8. **Integrate sources into the Power BI data model**
+9. **Design for refresh and repeatability**
 
 ##### API Querying and Source-Level Filtering
 
-One of the main technical solutions was to perform filtering directly through the public API rather than retrieving the complete dataset and filtering it only after import.
+Where supported, filtering was performed directly through the public API rather than after importing the complete dataset.
 
-For example, the population data request defines the required municipality type, age group, sex, reporting period, selected fields, sorting, and output format:
+For example, the population-data request specifies the municipality type, age group, sex, reporting period, selected fields, sorting, and output format:
 
 ```powerquery
 Source =
@@ -251,7 +257,7 @@ Source =
     )
 ```
 
-Using both CSV and JSON API responses allowed data from different exchange formats to be converted into structured Power Query tables.
+Using both CSV and JSON responses allowed data from different exchange formats to be converted into structured Power Query tables.
 
 ##### Dynamic VMI Excel Processing
 
@@ -268,7 +274,7 @@ Source =
     )
 ```
 
-Rather than selecting a single worksheet manually, Power Query identifies the relevant worksheets according to their naming pattern:
+Rather than selecting one worksheet manually, Power Query identifies the relevant sheets according to their naming pattern:
 
 ```powerquery
 #"Filtered Rows" =
@@ -283,8 +289,6 @@ Rather than selecting a single worksheet manually, Power Query identifies the re
         each [Kind] = "Sheet"
     )
 ```
-
-This makes it possible to process multiple relevant worksheets without hard-coding one exact sheet name.
 
 The selected worksheet tables are then expanded for further transformation:
 
@@ -307,39 +311,37 @@ The selected worksheet tables are then expanded for further transformation:
     )
 ```
 
-The same VMI source is subsequently transformed for different analytical purposes, including the central `fac_Parama` fact table and the `Dim_ParamosGavejas` recipient dimension.
+The same VMI source is later transformed for different analytical purposes, including the central `fac_Parama` fact table and the recipient dimension.
 
 ##### Refreshable Data Pipeline
 
-A central objective of the extraction design was to **minimise manual data handling and make the workflow reusable when source data changes**.
+A central objective of the extraction design was to **reduce manual data handling and make the workflow reusable when source data changes**.
 
-With direct API and web connections, Power BI can request the source data again during refresh. The existing Power Query steps can then automatically repeat the cleaning, filtering, reshaping, and preparation process before the updated data is loaded into the model.
+With direct API and web connections, Power BI can request the source data again during refresh and reapply the existing Power Query transformation steps.
 
 The intended workflow is:
 
 `Source data changes` → `Power BI refresh` → `Updated data retrieved` → `Power Query transformations reapplied` → `Data model updated` → `Report updated`
 
-This means that the transformation process does not need to be manually repeated every time the underlying connected data changes.
+This means the transformation process does not need to be manually repeated whenever the underlying connected data changes.
 
 ##### Technical Flow
 
 `Original public sources` → `API / direct web connection` → `Source-level filtering` → `JSON / CSV / Excel ingestion` → `Power Query transformations` → `Data standardisation` → `Fact and dimension tables` → `Power BI data model` → `Refresh with updated source data`
 
-The main technical challenge was not simply retrieving external data, but **combining different data acquisition methods and heterogeneous source formats into a consistent and refreshable analytical model**.
+The main technical challenge was not simply retrieving external data, but **combining different acquisition methods and heterogeneous source formats into a consistent and refreshable analytical model**.
 
-The resulting workflow combines **API-based data retrieval, source-level filtering, direct web-file ingestion, multi-format processing, dynamic Excel worksheet selection, Python-based data enrichment, and repeatable Power Query transformations**.
+The resulting workflow combines **API-based retrieval, source-level filtering, direct web-file ingestion, multi-format processing, dynamic worksheet selection, Python-based enrichment, and repeatable Power Query transformations**.
 
-Where supported by the source, this approach reduces repetitive manual work and allows changes in the original data to flow through the same extraction, transformation, modelling, and reporting process during refresh.
-
-> **Note:** Refreshability depends on the original provider maintaining the connected URL, API endpoint, and expected data structure. If a source changes its location or schema, the corresponding query may require adjustment.
+> **Note:** Refreshability depends on the original provider maintaining the connected URL, API endpoint, and expected data structure. If the source location or schema changes, the corresponding query may require adjustment.
 
 ### 3. Data Cleaning and Transformation
 
 The extracted data came from several sources and formats, including **JSON API responses, CSV files, Excel workbooks, and Python-enriched data**. These sources differed considerably in structure and were not immediately suitable for analysis.
 
-Data cleaning and transformation were performed primarily in **Power Query using M**.
+Cleaning and transformation were performed primarily in **Power Query using M**.
 
-A key objective was to keep the transformation logic inside Power Query rather than manually modifying the source files. This makes the cleaning process **repeatable and refreshable**: when connected source data is refreshed, the same transformation steps can be applied again automatically.
+A key objective was to keep transformation logic inside Power Query rather than manually modifying the source files. This makes the process **repeatable and refreshable**: when connected source data is refreshed, the same transformation steps can be applied again automatically.
 
 #### Power Query Transformation Workflow
 
@@ -359,17 +361,15 @@ The cleaning process included:
 - Grouping and aggregating records
 - Preparing fact and dimension tables for the Power BI model
 
-The transformations were built as sequential **Applied Steps**, allowing each stage of the cleaning process to remain visible, reproducible, and easier to troubleshoot.
+The transformations were built as sequential **Applied Steps**, keeping each stage visible, reproducible, and easier to troubleshoot.
 
-![Power Query Applied Steps](images/power-query-applied-steps.png)
-
-*Example of the Power Query transformation pipeline showing the sequence of cleaning and reshaping operations applied to the source data.*
+*Power Query transformation pipeline showing the sequence of cleaning and reshaping operations applied to the source data.*
 
 #### Reshaping Nested API Data
 
 Some API responses were not returned as simple flat tables.
 
-For example, the public names dataset contained nested JSON structures. Power Query was used to expand the JSON list and its records into rows and columns suitable for the analytical model.
+For example, the public names dataset contained nested JSON structures. Power Query was used to expand the JSON list and records into rows and columns suitable for the analytical model:
 
 ```powerquery
 #"Expanded _data" =
@@ -403,13 +403,13 @@ The workbook contained:
 - Year information embedded in text
 - Headers requiring standardisation
 
-Instead of cleaning each year's worksheet manually, Power Query identifies relevant worksheets by their naming pattern and processes them through the same transformation pipeline.
+Instead of cleaning each annual worksheet manually, Power Query identifies relevant sheets by naming pattern and processes them through the same transformation pipeline.
 
 One useful transformation involved extracting the reporting year from text such as:
 
 `Apskaičiuota už 2024 metus`
 
-The text was split and the year was converted into a proper date value:
+The text was split and converted into a proper date value:
 
 ```powerquery
 #"Split Column by Delimiter" =
@@ -428,19 +428,17 @@ The text was split and the year was converted into a proper date value:
     )
 ```
 
-Converting the reporting year into a real date rather than keeping it as text made the field suitable for **relationships with the calendar table, filtering, and time-based analysis**.
+Converting the reporting year into a date rather than keeping it as text made the field suitable for **calendar relationships, filtering, and time-based analysis**.
 
-This workflow allowed data from multiple reporting years to be transformed into a consistent structure without manually preparing separate files for each year.
+This workflow allowed multiple reporting years to be transformed into a consistent structure without manually preparing separate files.
 
 #### Data Enrichment with Merge Queries
 
 Power Query was also used to combine independently collected datasets.
 
-One example involved the organisation data collected through Python web scraping. The manager field was cleaned and separated into first name and surname.
+One example involved organisation information collected through Python web scraping. The manager field was cleaned and separated into first name and surname.
 
 The manager's first name was then matched with the public names reference dataset using a **Left Outer Join**.
-
-![Power Query Merge Queries](images/power-query-merge.png)
 
 *Organisation data enriched by merging the manager's first name with the public names reference table.*
 
@@ -466,9 +464,9 @@ The merge was performed using `Table.NestedJoin()`:
     )
 ```
 
-Where no corresponding value could be found in the reference table, the result was explicitly classified as `Nežinoma` (Unknown) rather than leaving an unexplained null value.
+Where no corresponding value could be found in the reference table, the result was classified as `Nežinoma` (Unknown) rather than left as an unexplained null.
 
-This demonstrated how Power Query can be used not only for cleaning individual datasets, but also for **lookup-based enrichment and integration of independently collected data sources**.
+This demonstrates how Power Query can support both **data cleaning and lookup-based enrichment across independently collected datasets**.
 
 > **Data limitation:** The resulting gender category is inferred from the first-name classification available in the external reference dataset. It should therefore be interpreted as a name-based classification rather than a verified personal attribute.
 
@@ -492,7 +490,7 @@ These steps helped ensure that identifiers used in relationships were valid and 
 
 The municipality dataset contained population observations for several reporting periods.
 
-Power Query's grouping functionality was used to calculate the average population for each municipality across the selected period:
+Power Query grouping was used to calculate the average population for each municipality across the selected period:
 
 ```powerquery
 #"Grouped Rows" =
@@ -515,14 +513,12 @@ The resulting values were rounded and used as municipality-level contextual info
 
 #### Power Query Features Applied
 
-Through the transformation process, the project applied several important Power Query and M concepts, including:
-
 | Power Query feature | Application in the project |
-|---|---|
+| --- | --- |
 | `Table.SelectRows()` | Filtering invalid and irrelevant records |
 | `Table.SelectColumns()` / `Table.RemoveColumns()` | Controlling the analytical schema |
 | `Table.PromoteHeaders()` | Converting source rows into column headers |
-| `Table.TransformColumnTypes()` | Explicit management of text, dates, identifiers, and numeric values |
+| `Table.TransformColumnTypes()` | Managing text, dates, identifiers, and numeric values |
 | `Table.ExpandListColumn()` | Expanding nested JSON lists |
 | `Table.ExpandRecordColumn()` | Converting JSON records into columns |
 | `Table.ExpandTableColumn()` | Expanding nested Excel worksheet tables |
@@ -561,38 +557,36 @@ The overall transformation process followed this structure:
 
 A key lesson from this project was using Power Query as more than a basic data-cleaning interface. It became the project's **repeatable ETL layer**, responsible for transforming heterogeneous source data into consistent, model-ready tables.
 
-Because the transformations are stored as Power Query steps rather than performed manually on the original files, the same cleaning logic can be reapplied during refresh:
+Because the transformations are stored as Power Query steps rather than performed manually, the same logic can be reapplied during refresh:
 
 `Updated source data` → `Power Query refresh` → `Transformation steps reapplied` → `Model-ready tables` → `Updated Power BI model`
 
 ### 4. Data Modelling
 
-The data was structured using a star-schema-based model, with `fac_Parama` as the central fact table containing support amounts, number of supporters, recipient identifiers, and year.
+The data was structured using a **star-schema-based model**, with `fac_Parama` as the central fact table containing support amounts, supporter counts, recipient identifiers, and year.
 
-Supporting dimension tables provide additional context about:
+Supporting dimension tables provide context for:
 
 - Support recipients and their characteristics
 - Recipient contact and organisational information
 - Municipality and population data
 - Calendar
 
-The model uses one-to-many relationships between dimension tables and the central fact table, allowing support data to be analysed across different years, recipients, organisation characteristics, and geographical areas.
+The model uses one-to-many relationships between dimension tables and the central fact table, allowing support data to be analysed across years, recipients, organisation characteristics, and geographical areas.
 
-A dedicated calendar table was created to support consistent time-based filtering and yearly comparisons.
+A dedicated calendar table supports consistent time-based filtering and yearly comparisons.
 
-Municipality population data was also integrated into the model, allowing support patterns to be explored in relation to the size and characteristics of different municipalities.
+Municipality population data was also integrated into the model, allowing support patterns to be explored in relation to municipality size and characteristics.
 
-Separate measure tables were used to organise DAX calculations and keep the model easier to navigate and maintain. These include general KPIs as well as specialised calculations for the Top 10 recipients and supporter behaviour.
+A dedicated measure table is used to organise DAX calculations and keep the model easier to navigate and maintain.
 
-This structure supports interactive filtering and makes it possible to analyse the same support measures from multiple perspectives without duplicating the underlying data.
+This structure supports interactive filtering and allows the same support measures to be analysed from multiple perspectives without duplicating the underlying data.
 
-![Data Model](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/images/DataModel.png?raw=true)
+*Power BI data model showing the central fact table, supporting dimensions, relationships, and measure table.*
 
-*Power BI data model showing the central fact table, supporting dimensions, relationships, and measure tables.*
+### 5. DAX Calculations
 
-## 5. DAX Calculations
-
-DAX was used to extend the transformed dataset with reusable analytical measures for **totals, distribution analysis, rankings, percentage shares and changes over time**.
+DAX was used to extend the transformed dataset with reusable analytical measures for **totals, distribution analysis, rankings, percentage shares, and changes over time**.
 
 Most calculations are stored in a dedicated **`Rodikliai` measure table**, keeping analytical logic separate from the fact and dimension tables and making the model easier to maintain.
 
@@ -604,22 +598,24 @@ A small set of base measures provides the foundation for more complex calculatio
 - **Number of supporters** using `SUM()`
 - **Number of recipients** using `DISTINCTCOUNT()`
 - **Average support per supporter** using `DIVIDE()`
-- Descriptive statistics including **average, median, minimum, maximum and mode**
+- Descriptive statistics including **average, median, minimum, maximum, and mode**
 
-More complex measures are built on these base measures rather than repeatedly recalculating the same logic. This **measure branching** approach improves readability, consistency and maintainability.
+More complex measures are built on these base measures rather than repeatedly recalculating the same logic. This **measure branching** approach improves readability, consistency, and maintainability.
 
 #### Share-of-Total Calculations
 
-Percentage measures compare individual recipients and recipient groups with the relevant total, including:
+Percentage measures compare individual recipients and recipient groups with the relevant total.
 
-- recipient share of total support
-- municipality share
-- support share by recipient age group
-- support share by municipality group
-- support share by manager gender
-- recipient-count share across the same categories
+These include:
 
-`CALCULATE()` together with `ALL()`, `ALLSELECTED()` and `REMOVEFILTERS()` is used to deliberately control filter context.
+- Recipient share of total support
+- Municipality share
+- Support share by recipient age group
+- Support share by municipality group
+- Support share by manager gender
+- Recipient-count share across the same categories
+
+`CALCULATE()` together with `ALL()`, `ALLSELECTED()`, and `REMOVEFILTERS()` is used to deliberately control filter context.
 
 For example, category filters can be removed from the denominator while retaining other active report filters. This allows measures to respond dynamically to report selections while still calculating the appropriate comparison total.
 
@@ -631,11 +627,9 @@ Additional DAX measures investigate **how concentrated the 1.2% support distribu
 
 Recipients are dynamically evaluated according to the amount of support they receive, allowing different parts of the distribution to be compared with the overall amount of support.
 
-More complex calculations use virtual tables and iterator functions such as `ADDCOLUMNS()`, `TOPN()`, `FILTER()`, `EXCEPT()` and `SUMX()`.
+More complex calculations use virtual tables and iterator functions such as `ADDCOLUMNS()`, `TOPN()`, `FILTER()`, `EXCEPT()`, and `SUMX()`.
 
-`ALLSELECTED()` allows these calculations to respond to the current report context, meaning concentration can be analysed both across the full dataset and within selected subsets.
-
-![Distribution and concentration analysis](images/dax-support-concentration.png)
+`ALLSELECTED()` allows these calculations to respond to the active report context, meaning concentration can be analysed across both the complete dataset and selected subsets.
 
 *Dynamic DAX measures compare different parts of the recipient distribution and calculate their share of total support.*
 
@@ -643,13 +637,15 @@ More complex calculations use virtual tables and iterator functions such as `ADD
 
 Recipients are ranked dynamically according to:
 
-- **total support received**
-- **number of supporters**
-- **average support per supporter**
+- **Total support received**
+- **Number of supporters**
+- **Average support per supporter**
 
 `RANKX()` with descending `DENSE` ranking is used so that the highest value receives rank 1.
 
 Different filter-context approaches are used depending on the analytical purpose. `ALLSELECTED()` allows rankings to respond to the population currently selected in the report, while `ALL()` and `REMOVEFILTERS()` are used where a stable comparison against a wider population is required.
+
+*Dynamic ranking measures compare recipients while responding to the active report selection.*
 
 #### Year-to-Year Comparisons
 
@@ -663,11 +659,9 @@ The current value is compared with the previous available year using:
 
 This produces a conventional percentage-change measure, where positive values represent growth and negative values represent decline.
 
-Supporting measures identify the previous year with available data before calculating the percentage difference. `SELECTEDVALUE()` is used where a single year is required, while `MAXX()`, `FILTER()` and `CALCULATE()` identify the relevant preceding period.
+Supporting measures identify the previous year with available data before calculating the percentage difference. `SELECTEDVALUE()` is used where a single year is required, while `MAXX()`, `FILTER()`, and `CALCULATE()` identify the relevant preceding period.
 
 When no valid previous value exists, the measure deliberately returns `BLANK()` rather than displaying a misleading percentage.
-
-![Year-to-year change analysis](images/dax-yearly-change.png)
 
 *Year-to-year DAX measures compare support and supporter counts with the previous available period, with conditional formatting highlighting growth and decline.*
 
@@ -685,76 +679,77 @@ Additional checks using `ISBLANK()` and the number of selected years prevent per
 
 DAX is also used to make report elements respond to user selections.
 
-For example, the selected-recipient measure uses `HASONEVALUE()`, `SELECTEDVALUE()`, `ISFILTERED()`, `VALUES()` and `CONCATENATEX()` to dynamically display either a single selected recipient, multiple selected recipients or a default label when no recipient filter is applied.
+For example, the selected-recipient measure uses `HASONEVALUE()`, `SELECTEDVALUE()`, `ISFILTERED()`, `VALUES()`, and `CONCATENATEX()` to dynamically display either a single selected recipient, multiple selected recipients, or a default label when no recipient filter is applied.
 
 This improves report navigation and helps users understand the filter context behind the displayed results.
 
 #### DAX Practices Applied
 
-The DAX layer follows several practices intended to keep the model clear, reusable and easier to maintain:
+The DAX layer follows several practices intended to keep the model clear, reusable, and maintainable:
 
 - **Dedicated measure table** to separate analytical calculations from source data
 - **Measure branching** so complex calculations reuse established base measures
 - **Variables (`VAR`)** to make multi-step calculations easier to read and debug
 - **`DIVIDE()`** for safe percentage and ratio calculations
-- **Explicit filter-context management** using `CALCULATE()`, `ALL()`, `ALLSELECTED()` and `REMOVEFILTERS()`
+- **Explicit filter-context management** using `CALCULATE()`, `ALL()`, `ALLSELECTED()`, and `REMOVEFILTERS()`
 - **Virtual tables** for dynamic ranking and distribution analysis
-- **Iterator functions** such as `SUMX()`, `MAXX()` and `MINX()` where row-by-row evaluation is required
+- **Iterator functions** such as `SUMX()`, `MAXX()`, and `MINX()` where row-by-row evaluation is required
 - **`BLANK()` handling** to avoid presenting misleading results when valid comparisons are unavailable
 - **Dynamic calculations** that respond to slicers and report selections rather than relying on static values
 
 Together, these measures turn the cleaned dataset into an analytical model capable of exploring not only how much support was distributed, but also **how concentrated that support was, how recipients compare with one another, and how support patterns changed over time**.
 
-### 7. Report Design and Interactivity
+### 6. Report Design and Interactivity
 
-Power BI visualisations were selected and adapted to make the report flexible and easy to explore.
+Power BI visualisations were selected and adapted to make the report clear, interactive, and easy to explore.
 
 The report includes:
 
-- Relevant charts and visuals
+- Charts and KPI visuals
 - Slicers
 - Tooltips
 - Drill-through pages
 - Interactive filtering
 - Yearly comparison views
+- Conditional formatting
 
-### 8. Publishing
+The report design aims to balance analytical detail with readability, allowing users to move from high-level trends to individual recipient-level information.
 
-The final report was published in Power BI Service and shared as a Power BI App.
+### 7. Publishing
+
+The final report is published through **Power BI Service** and shared as a **Power BI App**.
+
+This allows the completed report to be accessed independently from the Power BI Desktop development environment.
 
 ## Key Findings
 
-One of the main findings is that the **top 10 largest recipients** have grown over the five-year period, both in terms of:
+One of the main findings so far is that the **largest recipients have strengthened their position over the five-year period**, both in terms of:
 
 - The amount of support received
 - The number of people allocating support to them
 
 This suggests that visibility, recognition, and existing reach may play an important role in the competition for 1.2% support.
 
-Additional findings will be listed here:
-
-- Finding 1
-- Finding 2
-- Finding 3
-- Finding 4
+Additional findings will be added as the analysis is finalised.
 
 ## Project Status
 
-This project is currently in progress.
+This project is currently **in progress**.
 
-The next steps include:
+Next steps include:
 
-- Adding more findings
+- Finalising the analytical findings
 - Refining visualisations
 - Improving report interactivity
-- Publishing final screenshots or report links
-- Updating this README with final conclusions
+- Adding final report screenshots
+- Publishing the final Power BI report link
+- Updating the README with conclusions
 
 ## How to View the Report
 
-Power BI report link:
+Power BI report:
 
-`[Add your Power BI report or app link here]`
+`[Add Power BI report or app link here]`
 
 ## Author
 
