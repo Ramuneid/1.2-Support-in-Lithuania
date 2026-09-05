@@ -1,5 +1,7 @@
 # Not All Barriers Are Visible: 1.2% Support in Lithuania
 
+![Research question visual](images/research-question-visual.png)
+
 *Landing page of the Power BI report. Visual created with Gamma.app.*
 
 ## Project Overview
@@ -78,10 +80,10 @@ The script identifies organisations by company code, retrieves their public prof
 
 The main technical steps were:
 
-1. **Load and filter input data**  
+1. **Load and filter input data**
    Read the existing CSV, select records requiring additional lookup, normalise company codes, and remove duplicate targets.
 
-2. **Build resilient HTTP requests**  
+2. **Build resilient HTTP requests**
    Configure a reusable `requests.Session` with retries for temporary HTTP errors such as `429`, `500`, `502`, `503`, and `504`. Randomised request headers and delays are also used between requests.
 
 A retry strategy helps the process recover from temporary network or server failures without stopping the entire workflow:
@@ -99,10 +101,10 @@ session.mount("https://", adapter)
 session.mount("http://", adapter)
 ```
 
-3. **Search for organisations by company code**  
+3. **Search for organisations by company code**
    Construct search URLs dynamically using query parameters and parse the returned results to identify candidate organisation profiles.
 
-4. **Validate organisation matches**  
+4. **Validate organisation matches**
    Open candidate profile pages and compare the company code found on the page with the source record before accepting the result.
 
 ```python
@@ -120,10 +122,10 @@ for candidate_url in candidate_urls:
         return company_response.url
 ```
 
-5. **Parse HTML content**  
+5. **Parse HTML content**
    Use `BeautifulSoup` to navigate the HTML structure and locate the relevant information blocks and table fields.
 
-6. **Extract organisation attributes**  
+6. **Extract organisation attributes**
    Reusable functions retrieve selected fields including:
 
    - Organisation name
@@ -166,16 +168,16 @@ vadovas = gauti_reiksme_pagal_pavadinima(blokas2, "Vadovas")
 adresas = gauti_reiksme_pagal_pavadinima(blokas2, "Adresas")
 ```
 
-7. **Clean extracted values**  
+7. **Clean extracted values**
    Use regular expressions and helper functions to remove unnecessary whitespace and page-specific text.
 
-8. **Handle missing or failed results**  
+8. **Handle missing or failed results**
    Create structured empty records where an organisation cannot be found or a request fails, rather than interrupting the entire process.
 
-9. **Update the original dataset**  
+9. **Update the original dataset**
    Match scraped values back to source records using the normalised company code.
 
-10. **Export a timestamped result file**  
+10. **Export a timestamped result file**
     Write the enriched dataset to a new UTF-8 CSV file, preserving the original source data.
 
 ##### Technical Flow
@@ -363,6 +365,8 @@ The cleaning process included:
 
 The transformations were built as sequential **Applied Steps**, keeping each stage visible, reproducible, and easier to troubleshoot.
 
+![Power Query Applied Steps](images/power-query-applied-steps.png)
+
 *Power Query transformation pipeline showing the sequence of cleaning and reshaping operations applied to the source data.*
 
 #### Reshaping Nested API Data
@@ -439,6 +443,8 @@ Power Query was also used to combine independently collected datasets.
 One example involved organisation information collected through Python web scraping. The manager field was cleaned and separated into first name and surname.
 
 The manager's first name was then matched with the public names reference dataset using a **Left Outer Join**.
+
+![Power Query Merge Queries](images/power-query-merge.png)
 
 *Organisation data enriched by merging the manager's first name with the public names reference table.*
 
@@ -535,24 +541,24 @@ The resulting values were rounded and used as municipality-level contextual info
 
 The overall transformation process followed this structure:
 
-`Raw API / CSV / Excel data`  
-↓  
-`Expand and restructure source data`  
-↓  
-`Remove metadata and unnecessary fields`  
-↓  
-`Clean and standardise values`  
-↓  
-`Validate identifiers and handle missing data`  
-↓  
-`Create derived fields`  
-↓  
-`Merge reference datasets`  
-↓  
-`Remove duplicates and aggregate where required`  
-↓  
-`Prepare fact and dimension tables`  
-↓  
+`Raw API / CSV / Excel data`
+↓
+`Expand and restructure source data`
+↓
+`Remove metadata and unnecessary fields`
+↓
+`Clean and standardise values`
+↓
+`Validate identifiers and handle missing data`
+↓
+`Create derived fields`
+↓
+`Merge reference datasets`
+↓
+`Remove duplicates and aggregate where required`
+↓
+`Prepare fact and dimension tables`
+↓
 `Load into Power BI data model`
 
 A key lesson from this project was using Power Query as more than a basic data-cleaning interface. It became the project's **repeatable ETL layer**, responsible for transforming heterogeneous source data into consistent, model-ready tables.
@@ -581,6 +587,8 @@ Municipality population data was also integrated into the model, allowing suppor
 A dedicated measure table is used to organise DAX calculations and keep the model easier to navigate and maintain.
 
 This structure supports interactive filtering and allows the same support measures to be analysed from multiple perspectives without duplicating the underlying data.
+
+![Data Model](images/DataModel.png)
 
 *Power BI data model showing the central fact table, supporting dimensions, relationships, and measure table.*
 
@@ -631,6 +639,8 @@ More complex calculations use virtual tables and iterator functions such as `ADD
 
 `ALLSELECTED()` allows these calculations to respond to the active report context, meaning concentration can be analysed across both the complete dataset and selected subsets.
 
+![Distribution and concentration analysis](images/dax-support-concentration.png)
+
 *Dynamic DAX measures compare different parts of the recipient distribution and calculate their share of total support.*
 
 #### Ranking Calculations
@@ -662,6 +672,8 @@ This produces a conventional percentage-change measure, where positive values re
 Supporting measures identify the previous year with available data before calculating the percentage difference. `SELECTEDVALUE()` is used where a single year is required, while `MAXX()`, `FILTER()`, and `CALCULATE()` identify the relevant preceding period.
 
 When no valid previous value exists, the measure deliberately returns `BLANK()` rather than displaying a misleading percentage.
+
+![Year-to-year change analysis](images/dax-yearly-change.png)
 
 *Year-to-year DAX measures compare support and supporter counts with the previous available period, with conditional formatting highlighting growth and decline.*
 
