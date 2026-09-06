@@ -727,35 +727,40 @@ The report includes:
 
 The report design aims to balance analytical detail with readability, allowing users to move from high-level trends to individual recipient-level information.
 
-### 7. Publishing
+### 7. Reporting
 
 The final report is published through **Power BI Service** and shared as a **Power BI App**.
 
 This allows the completed report to be accessed independently from the Power BI Desktop development environment.
 
-## Key Findings
 
-One of the main findings so far is that the **largest recipients have strengthened their position over the five-year period**, both in terms of:
+## Exploratory Analysis
 
-- The amount of support received
-- The number of people allocating support to them
+The exploratory analysis provides an overview of **Lithuania’s 1.2% support data from 2020 to 2024**, combining key indicators with different perspectives on how support is distributed and how it has changed over time.
 
-This suggests that visibility, recognition, and existing reach may play an important role in the competition for 1.2% support.
+### Key Findings
 
-Additional findings will be added as the analysis is finalised.
+- **Overall support:** approximately **€150M** was allocated during the analysed period, with the highest amount received by a single recipient reaching around **€3M**.
 
-## Project Status
+- **Distribution of support:** the **largest 20% of recipients received approximately €94M**, while the **smallest 80% received around €26M**, showing that a substantial share of support is concentrated among a relatively small proportion of recipients.
 
-This project is currently **in progress**.
+- **Development over time:** annual support increased from approximately **€22M in 2020 to €36M in 2024**. The analysis also compares how support was distributed among the **Top 10 recipients, largest 20%, and smallest 80%** over time.
 
-Next steps include:
+![Support distribution over time](images/support-share-over-time.png)
 
-- Finalising the analytical findings
-- Refining visualisations
-- Improving report interactivity
-- Adding final report screenshots
-- Publishing the final Power BI report link
-- Updating the README with conclusions
+- **Donors and recipients:** the number of donors remained relatively stable at approximately **560K–604K**, while the number of eligible recipients fell substantially in **2024, from around 22K to 15K**. This decline coincides with **changes to the eligibility rules determining which organisations can receive 1.2% support**, rather than simply reflecting a decline in participation.
+
+![Donors and recipients over time](images/donors-recipients-over-time.png)
+
+- **Geographical distribution:** recipients registered in **Vilnius city municipality received approximately €74M**, considerably more than those in Kaunas city (€17M) and other municipalities.
+
+- **Legal form:** **public institutions** received the largest share of support, approximately **€51M (34%)**, followed by **associations with €38M (25%)** and **charity and support foundations with €19M (13%)**.
+
+- **Recipient age:** established organisations account for most of the support. Organisations operating for **11–20 years represent 28% of recipients but receive 39% of total support**, while organisations aged **20+ years represent 43% of recipients and receive 36% of support**. Younger organisations receive a comparatively small share: recipients operating for **0–2 years account for 2% of recipients and receive 1% of support**, while those aged **3–5 years represent 8% of recipients and receive 7% of support**.
+
+![Support distribution by recipient age](images/support-according-to-org-age.png)
+
+The report is **interactive**, allowing users to filter the analysis by **year (2020–2024)** and **individual recipient** to explore how the main indicators and distributions change across different selections.
 
 ## How to View the Report
 
