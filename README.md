@@ -733,40 +733,144 @@ The final report is published through **Power BI Service** and shared as a **Pow
 
 This allows the completed report to be accessed independently from the Power BI Desktop development environment.
 
+---
 
 ## Exploratory Analysis
 
-The exploratory analysis provides an overview of **Lithuania’s 1.2% support data from 2020 to 2024**, combining key indicators with different perspectives on how support is distributed and how it has changed over time.
+The exploratory analysis provides an overview of **Lithuania's 1.2% support data from 2020 to 2024**. It was used to understand the scale and structure of the dataset, identify broad patterns, and determine which areas required deeper investigation.
 
-### Key Findings
+### Overall development
 
-- **Overall support:** approximately **€150M** was allocated during the analysed period, with the highest amount received by a single recipient reaching around **€3M**.
+Approximately **€150M** was allocated through the 1.2% support system during the analysed period. Annual support increased from approximately **€22M in 2020 to €36M in 2024**.
 
-- **Distribution of support:** the **largest 20% of recipients received approximately €94M**, while the **smallest 80% received around €26M**, showing that a substantial share of support is concentrated among a relatively small proportion of recipients.
+The number of donors remained relatively stable at approximately **560K–604K**, while the number of eligible recipients changed more substantially. In 2024, the number of recipients fell to approximately **15K**, compared with around **22K in 2023**.
 
-- **Development over time:** annual support increased from approximately **€22M in 2020 to €36M in 2024**. The analysis also compares how support was distributed among the **Top 10 recipients, largest 20%, and smallest 80%** over time.
-
-![Support distribution over time](images/support-share-over-time.png)
-
-- **Donors and recipients:** the number of donors remained relatively stable at approximately **560K–604K**, while the number of eligible recipients fell substantially in **2024, from around 22K to 15K**. This decline coincides with **changes to the eligibility rules determining which organisations can receive 1.2% support**, rather than simply reflecting a decline in participation.
+This decline coincides with **changes to the eligibility rules determining which organisations can receive 1.2% support**, rather than simply reflecting a decline in participation.
 
 ![Donors and recipients over time](images/donors-recipients-over-time.png)
 
-- **Geographical distribution:** recipients registered in **Vilnius city municipality received approximately €74M**, considerably more than those in Kaunas city (€17M) and other municipalities.
+### Recipient characteristics
 
-- **Legal form:** **public institutions** received the largest share of support, approximately **€51M (34%)**, followed by **associations with €38M (25%)** and **charity and support foundations with €19M (13%)**.
+Recipient age was explored to determine whether the distribution of support differs between newer and more established organisations.
 
-- **Recipient age:** established organisations account for most of the support. Organisations operating for **11–20 years represent 28% of recipients but receive 39% of total support**, while organisations aged **20+ years represent 43% of recipients and receive 36% of support**. Younger organisations receive a comparatively small share: recipients operating for **0–2 years account for 2% of recipients and receive 1% of support**, while those aged **3–5 years represent 8% of recipients and receive 7% of support**.
+Organisations operating for **11–20 years represent 28% of recipients but receive 39% of total support**. Organisations aged **20+ years account for 43% of recipients and receive 36% of support**.
+
+Younger organisations account for considerably smaller shares. Organisations operating for **0–2 years represent 2% of recipients and receive 1% of support**, while those operating for **3–5 years represent 8% of recipients and receive 7%**.
 
 ![Support distribution by recipient age](images/support-according-to-org-age.png)
 
-The report is **interactive**, allowing users to filter the analysis by **year (2020–2024)** and **individual recipient** to explore how the main indicators and distributions change across different selections.
+### Geography and legal form
 
-## How to View the Report
+The exploratory analysis also revealed substantial differences by location and legal form.
 
-Power BI report:
+Recipients registered in **Vilnius city municipality received approximately €74M**, considerably more than those registered in other municipalities.
 
-`[Add Power BI report or app link here]`
+By legal form, **public institutions** received the largest share of support, approximately **€51M (34%)**, followed by **associations with €38M (25%)** and **charity and support foundations with €19M (13%)**.
+
+---
+
+## Key Findings
+
+### 1. Who are the main recipients of 1.2% support?
+
+A relatively small number of organisations account for a substantial amount of support.
+
+Across 2020–2024, **VšĮ "Mėlyna ir geltona"** ranks first by total support, receiving approximately **€9.4M from 127.9K donors**. It is followed by **Rimanto Kaukėno paramos grupė (€3.5M)**, **Tėvynės sąjunga-Lietuvos krikščionys demokratai (€3.4M)**, and **Paramos ir labdaros fondas "Mamų unija" (€3.2M)**.
+
+The Top 10 include organisations working across humanitarian aid, social support, children's welfare, media, and political activity, showing that the largest recipients do not belong to a single type of organisation.
+
+![Top 10 recipients](images/top-10-recipients.png)
+
+### 2. How is support distributed among recipients?
+
+Eligibility for 1.2% support does not guarantee a substantial inflow of funding. The amounts received vary considerably: while the largest single recipient received approximately **€3M in one year**, many eligible recipients received only small amounts, and some received no support at all.
+
+Across 2020–2024:
+
+- **Total support:** approximately €149.6M
+- **Largest 20% of recipients:** approximately €94.4M
+- **Smallest 80% of recipients:** approximately €25.7M
+- **Top 10 recipients:** approximately €20M
+
+The smallest 80% therefore received only about **17.2% of all support allocated during the analysed period**.
+
+![Support amounts by recipient group](images/support-numbers.png)
+
+This demonstrates an important distinction between **being eligible for 1.2% support and being able to attract it**. Thousands of recipients participate in the system, but the financial benefit is distributed very unevenly.
+
+### 3. How has the distribution changed between 2020 and 2024?
+
+The overall amount of support increased from approximately **€22M in 2020 to €36M in 2024**, but this growth was not distributed equally.
+
+Support received by the **largest 20% increased from approximately €15M to €24M**, while the amount received by the **Top 10 increased from around €2M to €6M**.
+
+In contrast, the amount received by the **smallest 80% fell to approximately €3M in 2024**, despite total 1.2% support reaching its highest level during the analysed period.
+
+![Support distribution over time](images/support-share-over-time.png)
+
+The relative shares make this shift even clearer.
+
+The **smallest 80% received 17.2% of total support in 2020, but only 7.3% in 2024**. Over the same period, the share received by the **Top 10 increased from 10.4% to 17.4%**.
+
+By 2024, the **Top 10 recipients alone therefore received more than twice the share allocated collectively to the smallest 80% of recipients**.
+
+![Share of support by recipient group](images/dax-support-concentration.png)
+
+The results indicate that although the total amount available through the system has grown, **support has become increasingly concentrated among larger recipients**.
+
+### 4. Are the largest recipients becoming stronger over time?
+
+At the aggregate level, the position of the largest recipients has strengthened. The increasing share captured by the Top 10, alongside the declining share received by the smallest 80%, points towards greater concentration at the top.
+
+At the individual level, however, there is no single trajectory.
+
+Several leading recipients experienced substantial growth in both donor numbers and support received. The most striking example is **VšĮ "Mėlyna ir geltona"**, whose donor count increased by more than **10,000%** and whose support amount increased by more than **17,000%** across the analysed period.
+
+Other large recipients also show strong growth, while **Laisvės TV** provides an important exception: it remained among the largest recipients despite experiencing a decline in donor numbers.
+
+The recipient-level analysis therefore suggests that many of the largest recipients show a **more consistent growth pattern**, but being a large recipient does not automatically guarantee continued growth.
+
+### 5. Who may be left behind in the competition for support?
+
+The national-level distribution shows that being eligible for support does not necessarily translate into meaningful funding. To investigate this further, individual recipients were compared using **total support, number of donors, average support per donor, ranking, and change over time**.
+
+The analysis shows that some groups of organisations operate on a dramatically smaller scale than the national leaders.
+
+This is visible among organisations supporting people with **visual impairments**. Many receive only a few hundred or a few thousand euros and rely on relatively small donor bases. Several also experienced declining donor numbers during the analysed period.
+
+![Support for organisations representing people with visual impairments](images/vision-impared-group.png)
+
+A similar pattern appears among organisations supporting people with **hearing impairments**. Some experienced substantial percentage growth, but many continue to operate with relatively small donor bases and modest total support. Several organisations also experienced substantial declines.
+
+![Support for organisations representing people with hearing impairments](images/hearing-impaired-group.png)
+
+However, **small size alone should not be interpreted as poor performance**.
+
+Some recipients have very few donors but receive comparatively high average contributions per donor. This highlights an important characteristic of the 1.2% support system: **the number of supporters alone does not determine the amount of support an organisation can attract**. Because the allocation is based on personal income tax paid, the value of individual contributions is directly connected to supporters' taxable income.
+
+![Recipients with the highest average support per donor](images/highest-average-support-per-donor.png)
+
+This may suggest that the amount of support an organisation can attract depends not only on the **size of the community behind an initiative, but also on its financial capacity**. Organisations supported by higher-income groups may be able to generate substantial funding from relatively few supporters, while organisations representing lower-income communities may require considerably more supporters to achieve the same level of funding.
+
+For this reason, the organisations most likely to be "left behind" cannot be identified simply by selecting the smallest recipients. Their position may reflect a combination of a **small donor base, low total support, declining support or donor numbers over time, and the financial capacity of the community they represent or reach**. While the data reveals substantial differences in average support per donor, confirming the relationship with supporter income would require individual-level income data.
+
+---
+
+## Overall Finding
+
+The analysis shows that Lithuania's 1.2% support system **grew substantially in monetary value between 2020 and 2024, while the distribution of support became increasingly concentrated**.
+
+A large number of eligible recipients does not mean that funding is widely distributed. While the largest recipient received approximately **€3M in a single year**, many recipients received only minimal amounts or no support at all.
+
+The difference became particularly pronounced in 2024: the **smallest 80% of recipients collectively received only 7.3% of total support**, while the **Top 10 alone received 17.4%**.
+
+At the same time, recipient-level analysis shows that the picture is more complex than a simple division between "large" and "small". Some leading organisations have grown dramatically, others have lost donors, and some small organisations attract relatively high contributions from only a handful of supporters.
+
+The answer to the project's central question — **"Who wins in the race for 1.2% support, and who is left behind?"** — is therefore not determined by eligibility alone.
+
+The strongest position appears to belong to organisations that can **attract and retain substantial donor bases over time**, while recipients combining **few donors, low support amounts, and declining support or donor numbers** appear to occupy the weakest position.
+
+The analysis identifies these patterns but does not establish **why** particular organisations attract more or less support. Understanding the underlying causes would require additional data beyond the 1.2% support dataset.
 
 ## Author
 
