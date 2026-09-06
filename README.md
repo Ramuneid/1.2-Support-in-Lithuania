@@ -1,8 +1,8 @@
 # Not All Barriers Are Visible: 1.2% Support in Lithuania
 
-![Research question visual](images/research-question-visual.png)
+![Landing page of the Power BI report](images/research-question-visual.png)
 
-*Landing page of the Power BI report. Visual created with Gamma.app.*
+*Landing page of the Power BI report introducing the central research question. Visual created with Gamma.app.*
 
 ## Project Overview
 
@@ -50,7 +50,7 @@ Data was collected through:
 
 ### 1. Goal Setting and Research Questions
 
-The project started with defining the analytical goal and formulating questions to guide the exploration:
+The project started by defining the analytical goal and formulating questions to guide the exploration:
 
 - Who are the main recipients of 1.2% support in Lithuania?
 - How is support distributed among recipients?
@@ -80,10 +80,10 @@ The script identifies organisations by company code, retrieves their public prof
 
 The main technical steps were:
 
-1. **Load and filter input data**
+1. **Load and filter input data**  
    Read the existing CSV, select records requiring additional lookup, normalise company codes, and remove duplicate targets.
 
-2. **Build resilient HTTP requests**
+2. **Build resilient HTTP requests**  
    Configure a reusable `requests.Session` with retries for temporary HTTP errors such as `429`, `500`, `502`, `503`, and `504`. Randomised request headers and delays are also used between requests.
 
 A retry strategy helps the process recover from temporary network or server failures without stopping the entire workflow:
@@ -101,10 +101,10 @@ session.mount("https://", adapter)
 session.mount("http://", adapter)
 ```
 
-3. **Search for organisations by company code**
+3. **Search for organisations by company code**  
    Construct search URLs dynamically using query parameters and parse the returned results to identify candidate organisation profiles.
 
-4. **Validate organisation matches**
+4. **Validate organisation matches**  
    Open candidate profile pages and compare the company code found on the page with the source record before accepting the result.
 
 ```python
@@ -122,10 +122,10 @@ for candidate_url in candidate_urls:
         return company_response.url
 ```
 
-5. **Parse HTML content**
+5. **Parse HTML content**  
    Use `BeautifulSoup` to navigate the HTML structure and locate the relevant information blocks and table fields.
 
-6. **Extract organisation attributes**
+6. **Extract organisation attributes**  
    Reusable functions retrieve selected fields including:
 
    - Organisation name
@@ -168,16 +168,16 @@ vadovas = gauti_reiksme_pagal_pavadinima(blokas2, "Vadovas")
 adresas = gauti_reiksme_pagal_pavadinima(blokas2, "Adresas")
 ```
 
-7. **Clean extracted values**
+7. **Clean extracted values**  
    Use regular expressions and helper functions to remove unnecessary whitespace and page-specific text.
 
-8. **Handle missing or failed results**
+8. **Handle missing or failed results**  
    Create structured empty records where an organisation cannot be found or a request fails, rather than interrupting the entire process.
 
-9. **Update the original dataset**
+9. **Update the original dataset**  
    Match scraped values back to source records using the normalised company code.
 
-10. **Export a timestamped result file**
+10. **Export a timestamped result file**  
     Write the enriched dataset to a new UTF-8 CSV file, preserving the original source data.
 
 ##### Technical Flow
@@ -365,7 +365,7 @@ The cleaning process included:
 
 The transformations were built as sequential **Applied Steps**, keeping each stage visible, reproducible, and easier to troubleshoot.
 
-![Power Query Applied Steps](images/power-query-applied-steps.png)
+![Power Query transformation steps](images/power-query-applied-steps.png)
 
 *Power Query transformation pipeline showing the sequence of cleaning and reshaping operations applied to the source data.*
 
@@ -444,7 +444,7 @@ One example involved organisation information collected through Python web scrap
 
 The manager's first name was then matched with the public names reference dataset using a **Left Outer Join**.
 
-![Power Query Merge Queries](images/power-query-merge.png)
+![Organisation data enrichment in Power Query](images/power-query-merge.png)
 
 *Organisation data enriched by merging the manager's first name with the public names reference table.*
 
@@ -541,24 +541,24 @@ The resulting values were rounded and used as municipality-level contextual info
 
 The overall transformation process followed this structure:
 
-`Raw API / CSV / Excel data`
-↓
-`Expand and restructure source data`
-↓
-`Remove metadata and unnecessary fields`
-↓
-`Clean and standardise values`
-↓
-`Validate identifiers and handle missing data`
-↓
-`Create derived fields`
-↓
-`Merge reference datasets`
-↓
-`Remove duplicates and aggregate where required`
-↓
-`Prepare fact and dimension tables`
-↓
+`Raw API / CSV / Excel data`  
+↓  
+`Expand and restructure source data`  
+↓  
+`Remove metadata and unnecessary fields`  
+↓  
+`Clean and standardise values`  
+↓  
+`Validate identifiers and handle missing data`  
+↓  
+`Create derived fields`  
+↓  
+`Merge reference datasets`  
+↓  
+`Remove duplicates and aggregate where required`  
+↓  
+`Prepare fact and dimension tables`  
+↓  
 `Load into Power BI data model`
 
 A key lesson from this project was using Power Query as more than a basic data-cleaning interface. It became the project's **repeatable ETL layer**, responsible for transforming heterogeneous source data into consistent, model-ready tables.
@@ -588,9 +588,9 @@ A dedicated measure table is used to organise DAX calculations and keep the mode
 
 This structure supports interactive filtering and allows the same support measures to be analysed from multiple perspectives without duplicating the underlying data.
 
-![Data Model](images/DataModel.png)
+![Power BI data model](images/DataModel.png)
 
-*Power BI data model showing the central fact table, supporting dimensions, relationships, and measure table.*
+*Power BI data model showing the central fact table, supporting dimensions, relationships, and dedicated measure table.*
 
 ### 5. DAX Calculations
 
@@ -639,10 +639,6 @@ More complex calculations use virtual tables and iterator functions such as `ADD
 
 `ALLSELECTED()` allows these calculations to respond to the active report context, meaning concentration can be analysed across both the complete dataset and selected subsets.
 
-![Distribution and concentration analysis](images/dax-support-concentration.png)
-
-*Dynamic DAX measures compare different parts of the recipient distribution and calculate their share of total support.*
-
 #### Ranking Calculations
 
 Recipients are ranked dynamically according to:
@@ -654,8 +650,6 @@ Recipients are ranked dynamically according to:
 `RANKX()` with descending `DENSE` ranking is used so that the highest value receives rank 1.
 
 Different filter-context approaches are used depending on the analytical purpose. `ALLSELECTED()` allows rankings to respond to the population currently selected in the report, while `ALL()` and `REMOVEFILTERS()` are used where a stable comparison against a wider population is required.
-
-*Dynamic ranking measures compare recipients while responding to the active report selection.*
 
 #### Year-to-Year Comparisons
 
@@ -673,9 +667,9 @@ Supporting measures identify the previous year with available data before calcul
 
 When no valid previous value exists, the measure deliberately returns `BLANK()` rather than displaying a misleading percentage.
 
-![Year-to-year change analysis](images/dax-yearly-change.png)
+![Year-to-year DAX calculations](images/dax-yearly-change.png)
 
-*Year-to-year DAX measures compare support and supporter counts with the previous available period, with conditional formatting highlighting growth and decline.*
+*Year-to-year DAX measures comparing support amounts and supporter counts with the previous available period, with conditional formatting highlighting growth and decline.*
 
 #### Whole-Period Change
 
@@ -739,7 +733,7 @@ This allows the completed report to be accessed independently from the Power BI 
 
 The exploratory analysis provides an overview of **Lithuania's 1.2% support data from 2020 to 2024**. It was used to understand the scale and structure of the dataset, identify broad patterns, and determine which areas required deeper investigation.
 
-### Overall development
+### Overall Development
 
 Approximately **€150M** was allocated through the 1.2% support system during the analysed period. Annual support increased from approximately **€22M in 2020 to €36M in 2024**.
 
@@ -749,7 +743,9 @@ This decline coincides with **changes to the eligibility rules determining which
 
 ![Donors and recipients over time](images/donors-recipients-over-time.png)
 
-### Recipient characteristics
+*Development of donor and eligible-recipient counts from 2020 to 2024. The sharp decline in recipients in 2024 coincides with changes to 1.2% support eligibility rules.*
+
+### Recipient Characteristics
 
 Recipient age was explored to determine whether the distribution of support differs between newer and more established organisations.
 
@@ -757,9 +753,11 @@ Organisations operating for **11–20 years represent 28% of recipients but rece
 
 Younger organisations account for considerably smaller shares. Organisations operating for **0–2 years represent 2% of recipients and receive 1% of support**, while those operating for **3–5 years represent 8% of recipients and receive 7%**.
 
-![Support distribution by recipient age](images/support-according-to-org-age.png)
+![Support according to organisation age](images/support-according-to-org-age.png)
 
-### Geography and legal form
+*Comparison of each organisation-age group's share of recipients with its share of total 1.2% support.*
+
+### Geography and Legal Form
 
 The exploratory analysis also revealed substantial differences by location and legal form.
 
@@ -771,6 +769,8 @@ By legal form, **public institutions** received the largest share of support, ap
 
 ## Key Findings
 
+The exploratory analysis was followed by a more focused investigation of the project's original research questions.
+
 ### 1. Who are the main recipients of 1.2% support?
 
 A relatively small number of organisations account for a substantial amount of support.
@@ -780,6 +780,8 @@ Across 2020–2024, **VšĮ "Mėlyna ir geltona"** ranks first by total support,
 The Top 10 include organisations working across humanitarian aid, social support, children's welfare, media, and political activity, showing that the largest recipients do not belong to a single type of organisation.
 
 ![Top 10 recipients](images/top-10-recipients.png)
+
+*Top 10 recipients across 2020–2024, comparing total support, number of donors, average support per donor, and change over time.*
 
 ### 2. How is support distributed among recipients?
 
@@ -794,8 +796,6 @@ Across 2020–2024:
 
 The smallest 80% therefore received only about **17.2% of all support allocated during the analysed period**.
 
-![Support amounts by recipient group](images/support-numbers.png)
-
 This demonstrates an important distinction between **being eligible for 1.2% support and being able to attract it**. Thousands of recipients participate in the system, but the financial benefit is distributed very unevenly.
 
 ### 3. How has the distribution changed between 2020 and 2024?
@@ -808,6 +808,8 @@ In contrast, the amount received by the **smallest 80% fell to approximately €
 
 ![Support distribution over time](images/support-share-over-time.png)
 
+*Development of total support and the amounts received by the Top 10, largest 20%, and smallest 80% of recipients from 2020 to 2024.*
+
 The relative shares make this shift even clearer.
 
 The **smallest 80% received 17.2% of total support in 2020, but only 7.3% in 2024**. Over the same period, the share received by the **Top 10 increased from 10.4% to 17.4%**.
@@ -815,6 +817,8 @@ The **smallest 80% received 17.2% of total support in 2020, but only 7.3% in 202
 By 2024, the **Top 10 recipients alone therefore received more than twice the share allocated collectively to the smallest 80% of recipients**.
 
 ![Share of support by recipient group](images/dax-support-concentration.png)
+
+*Changing share of total support by recipient group, showing increasing concentration among the largest recipients between 2020 and 2024.*
 
 The results indicate that although the total amount available through the system has grown, **support has become increasingly concentrated among larger recipients**.
 
@@ -840,9 +844,13 @@ This is visible among organisations supporting people with **visual impairments*
 
 ![Support for organisations representing people with visual impairments](images/vision-impared-group.png)
 
+*Recipient-level comparison of organisations supporting people with visual impairments, highlighting differences in donor bases, support amounts, rankings, and changes over time.*
+
 A similar pattern appears among organisations supporting people with **hearing impairments**. Some experienced substantial percentage growth, but many continue to operate with relatively small donor bases and modest total support. Several organisations also experienced substantial declines.
 
 ![Support for organisations representing people with hearing impairments](images/hearing-impaired-group.png)
+
+*Recipient-level comparison of organisations supporting people with hearing impairments, showing substantial differences in scale and development between recipients.*
 
 However, **small size alone should not be interpreted as poor performance**.
 
@@ -850,9 +858,13 @@ Some recipients have very few donors but receive comparatively high average cont
 
 ![Recipients with the highest average support per donor](images/highest-average-support-per-donor.png)
 
+*Recipients with comparatively high average support per donor, illustrating how a small donor base can still generate substantial support when individual allocations are larger.*
+
 This may suggest that the amount of support an organisation can attract depends not only on the **size of the community behind an initiative, but also on its financial capacity**. Organisations supported by higher-income groups may be able to generate substantial funding from relatively few supporters, while organisations representing lower-income communities may require considerably more supporters to achieve the same level of funding.
 
-For this reason, the organisations most likely to be "left behind" cannot be identified simply by selecting the smallest recipients. Their position may reflect a combination of a **small donor base, low total support, declining support or donor numbers over time, and the financial capacity of the community they represent or reach**. While the data reveals substantial differences in average support per donor, confirming the relationship with supporter income would require individual-level income data.
+For this reason, the organisations most likely to be "left behind" cannot be identified simply by selecting the smallest recipients. Their position may reflect a combination of a **small donor base, low total support, declining support or donor numbers over time, and the financial capacity of the community they represent or reach**.
+
+While the data reveals substantial differences in average support per donor, confirming the relationship with supporter income would require individual-level income data.
 
 ---
 
@@ -866,14 +878,14 @@ The difference became particularly pronounced in 2024: the **smallest 80% of rec
 
 At the same time, recipient-level analysis shows that the picture is more complex than a simple division between "large" and "small". Some leading organisations have grown dramatically, others have lost donors, and some small organisations attract relatively high contributions from only a handful of supporters.
 
-The answer to the project's central question — **"Who wins in the race for 1.2% support, and who is left behind?"** — is therefore not determined by eligibility alone.
+The strongest position appears to belong to organisations that can **attract and retain substantial donor bases over time**. However, because 1.2% support is linked to personal income tax paid, the analysis also suggests that the **financial capacity of the community behind an initiative may influence how much support it can generate**. Organisations with smaller, lower-income supporter bases may therefore face an additional disadvantage even when they succeed in mobilising their communities.
 
-The strongest position appears to belong to organisations that can **attract and retain substantial donor bases over time**, while recipients combining **few donors, low support amounts, and declining support or donor numbers** appear to occupy the weakest position.
+Recipients combining **few donors, low support amounts, and declining support or donor numbers** appear to occupy the weakest position.
 
-The analysis identifies these patterns but does not establish **why** particular organisations attract more or less support. Understanding the underlying causes would require additional data beyond the 1.2% support dataset.
+---
 
 ## Author
 
 Created by **Ramune Idzelyte**
 
-Have a project where data, people, or impact matter? I would be happy to connect on LinkedIn.
+Have a project where data, people, or impact matter? I would be happy to connect on [LinkedIn](https://www.linkedin.com/in/idzelyte).
