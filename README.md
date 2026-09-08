@@ -58,6 +58,16 @@ The project started by defining the analytical goal and formulating questions to
 - Are the largest recipients becoming stronger over time?
 - Who may be left behind in the competition for support?
 
+#### Data 
+
+| Dataset | Source | Raw Format / Structure | Main Data | Transformation & Cleaning Relevance | Used For |
+|---|---|---|---|---|---|
+| **1.2% Support Statistics** | [Lithuanian State Tax Inspectorate (VMI)](https://www.vmi.lt/) | Excel workbook · multiple sheets · semi-structured | Recipient code and name, municipality, legal form, number of allocations, calculated and transferred support amounts, year | Multiple yearly sheets combined; metadata/header rows removed; headers promoted; irrelevant columns removed; year extracted from text; numeric and date types assigned; null recipient records filtered; organisation names cleaned | Main fact table for analysing the distribution of 1.2% support |
+| **Municipality Population** | [Official Statistics Portal / Data.gov.lt](https://get.data.gov.lt/) | CSV API · structured tabular data | Municipality, year, population | API filtered to municipalities, total age population and both sexes; duplicates removed; null values filtered; data types assigned; municipality records grouped and average population for 2021–2025 calculated and rounded | Population-based comparison of support between municipalities |
+| **Lithuanian First Names** | [State Commission of the Lithuanian Language (VLKK) via Data.gov.lt](https://get.data.gov.lt/datasets/gov/vlkk/vardai/Vardas) | JSON API · nested records | First name and gender | Nested JSON expanded into a tabular structure; fields renamed; data types assigned; later joined to organisation representative first names | Estimating the gender of organisation representatives |
+| **Organisation Details** | [rekvizitai.csv](https://github.com/Ramuneid/1.2-Support-in-Lithuania/blob/main/Data%20/rekvizitai.csv) | CSV · scraped/enriched dataset | Organisation code, registration date, representative, address, phone, website | Unnecessary scraping/helper fields removed; missing codes filtered; representative name cleaned and split into first name and surname; duplicates removed; names joined with the VLKK names table; unmatched gender values classified as `Nežinoma` | Enriching recipient records with organisation and representative information |
+| **Recipient / Organisation Dimension** | [VMI 1.2% Support Statistics](https://www.vmi.lt/) | Derived from Excel source | Recipient code, recipient name, municipality, legal form | Created from the VMI support dataset; support measures and year fields removed; duplicate organisations removed; one record retained per recipient | Dimension table for the Power BI data model |
+
 ### 2. Data Extraction
 
 Data was collected from publicly available sources using three approaches: **Python web scraping, public APIs, and direct web data connections in Power Query**.
